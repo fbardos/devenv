@@ -1,0 +1,12 @@
+# Version matching according to PEP-440
+# run: conda env create --file environment.yml
+name: base
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - requests
+  - neovim
+  - isort
+  - ipython
+  - ipdb

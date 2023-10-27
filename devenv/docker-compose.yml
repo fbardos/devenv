@@ -1,0 +1,51 @@
+#
+# This docker-compose file needs a corresponding .env file with the variables.
+#
+version: "3.7"
+name: ${DEVENV_PROJECT_NAME}
+
+# ############################################################################
+# Services
+# ############################################################################
+services:
+  devenv:
+    container_name: devenv
+    image: fbardos/devenv
+    build:
+      context: .
+      args:
+        USER_USERNAME: "${DEVENV_USER_USERNAME}"
+        USER_PASSWORD: "${DEVENV_USER_PASSWORD}"
+        ZSH_PREFIX: "${DEVENV_ZSH_PREFIX}"
+        UBUNTU_VERSION: "${DEVENV_UBUNTU_VERSION}"
+    stdin_open: true  # docker run -i
+    tty: true  # docker run -t
+    environment:
+      - DEVENV_ID_NAME=${DEVENV_ID_NAME}
+      - DEVENV_ID_MAIL=${DEVENV_ID_MAIL}
+      - DISPLAY=unix$DISPLAY  # export DISPLAY env variable for X server
+    volumes:
+      - "devenv-doc:/home/${DEVENV_USER_USERNAME}/doc"
+      - "devenv-code:/home/${DEVENV_USER_USERNAME}/code"
+      - "devenv-miniconda3:/home/${DEVENV_USER_USERNAME}/miniconda3"
+      - "devenv-ssh:/home/${DEVENV_USER_USERNAME}/.ssh"
+      - "devenv-zsh:/home/${DEVENV_USER_USERNAME}/.zsh"
+      - "devenv-nvimconf:/home/${DEVENV_USER_USERNAME}/.config/nvim"
+      - "devenv-nvimplugs:/home/${DEVENV_USER_USERNAME}/.local/share/nvim"
+    ports:
+      - 9080:8080
+      - 9081:8081
+      - 9082:8082
+      - 9083:8083
+      - 9084:8084
+      - 9085:8085
+    network_mode: "host"
+
+volumes:
+  devenv-miniconda3:
+  devenv-doc:
+  devenv-code:
+  devenv-ssh:
+  devenv-zsh:
+  devenv-nvimconf:
+  devenv-nvimplugs:

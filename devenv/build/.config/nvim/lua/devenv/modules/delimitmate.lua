@@ -1,0 +1,3 @@
+return {
+    "raimondi/delimitmate",  -- automatically create closing for ), ], }, ...
+}
