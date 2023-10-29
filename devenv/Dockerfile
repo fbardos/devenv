@@ -38,7 +38,7 @@ ENV CONDA_DIR $WORKDIR/miniconda3
 # ############################################################################
 
 # Create main directories (build_tmp gets deleted after building)
-RUN mkdir code code/playground doc build_tmp .zsh .ssh \
+RUN mkdir code code/playground doc build_tmp .zsh .ssh .zsh_extra \
     && chmod 700 $WORKDIR/.ssh \
     && echo "AddKeysToAgent yes" >> $WORKDIR/.ssh/config
 

@@ -136,6 +136,15 @@ alias cdpack='source ~/scripts/cd_packages.sh'
 #alias play='cd ~/Documents/playground && conda activate playground'
 #alias cdalolap='cd ~/Documents/ergon/alolap && conda activate alolap'
 
+# Source additional files in folder ~/.zsh_extra
+# Only iterate, when there is a file present in .zsh_extra
+if [ -n "$(ls -A ~/.zsh_extra | grep .sh 2>/dev/null)" ]
+then
+    for file in ~/.zsh_extra/*; do
+        source "$file"
+    done
+fi
+
 # Syntax highlighting
 source ~/ext_repos/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
