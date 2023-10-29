@@ -116,6 +116,11 @@ RUN sudo apt-get update \
     && sudo chsh -s $(which zsh) $USER_USERNAME \
     # Install zsh plugins
     && git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $WORKDIR/ext_repos/zsh-syntax-highlighting \
+    # Set autocomplete for conda envs (& add lines before and after oh-my-zsh init)
+    # Source https://stackoverflow.com/a/57793510
+    && git clone https://github.com/esc/conda-zsh-completion $WORKDIR/ext_repos/conda-zsh-completion \
+    && sed -i "/source \$ZSH\/oh-my-zsh.sh/ifpath\+=~/ext_repos/conda-zsh-completion" $WORKDIR/.zshrc \
+    && sed -i "/source \$ZSH\/oh-my-zsh.sh/acompinit conda" $WORKDIR/.zshrc \
     ### Set zsh theme
     && echo "source ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k/powerlevel10k.zsh-theme" >> ~/.zshrc \
     # Add prefix for shell if ZSH_PREFIX is provided
