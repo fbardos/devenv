@@ -32,6 +32,7 @@ services:
       - "devenv-zsh:/home/${DEVENV_USER_USERNAME}/.zsh"
       - "devenv-nvimconf:/home/${DEVENV_USER_USERNAME}/.config/nvim"
       - "devenv-nvimplugs:/home/${DEVENV_USER_USERNAME}/.local/share/nvim"
+      - "${HOME}/devenv_exchange:/home/${DEVENV_USER_USERNAME}/devenv_exchange"
     ports:
       - 9080:8080
       - 9081:8081
