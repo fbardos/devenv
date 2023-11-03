@@ -68,6 +68,7 @@ RUN sudo apt-get update \
     git \
     curl \
     man \
+    fzf \
     manpages-posix \
     # #################################
     # Package manager
