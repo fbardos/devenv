@@ -30,6 +30,7 @@ return {
 
         keymap.set("n", "<leader>f", "<cmd>Telescope find_files theme=ivy<cr>", { desc = "Fuzzy find files in cwd" })
         keymap.set("n", "<leader>F", "<cmd>Telescope live_grep theme=ivy<cr>", { desc = "Find string in cwd" })
+        keymap.set("n", "<leader>g", "<cmd>Telescope lsp_document_symbols theme=ivy<cr>", { desc = "Find LSP symbols in current file" })
         keymap.set("n", "<leader>t", "<cmd>Telescope treesitter theme=ivy<cr>", { desc = "Fuzzy find in treesitter" })
     end,
 }
