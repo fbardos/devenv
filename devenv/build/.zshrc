@@ -25,8 +25,11 @@ HISTFILE=${ZDOTDIR:-$HOME}/.zsh/.zsh_history
 
 ### PYTHON Specific
 # Set ENV PYTHONBREAKPOINT to ipython debugger (ipdb)
-# Source: https://www.andreagrandi.it/2018/10/16/using-ipdb-with-python-37-breakpoint/
-export PYTHONBREAKPOINT=ipdb.set_trace
+#   Source: https://www.andreagrandi.it/2018/10/16/using-ipdb-with-python-37-breakpoint/
+# fbardos (2023-11-05): Currently disabled, because it leads to pytest --pdb with no
+#   possible tab completion. See https://github.com/pytest-dev/pytest/issues/2064
+#   Use pdb++ instead.
+# export PYTHONBREAKPOINT=ipdb.set_trace
 
 ### Truecolor support
 # export COLORTERM=truecolor
