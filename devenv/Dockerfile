@@ -70,6 +70,7 @@ RUN sudo apt-get update \
     man \
     tree \
     fzf \
+    vim \
     manpages-posix \
     # #################################
     # Package manager
