@@ -76,6 +76,14 @@ return {
         config = function()
             vim.cmd.colorscheme "midnight"
 
+            -- Add function to easily change HighlightGroups
+            local function setHighlightGroup(highlightGroup, opts)
+                vim.api.nvim_set_hl(0, highlightGroup, opts)
+            end
+
+            -- Change colors for search results (BG green, FG dark-grey)
+            setHighlightGroup("Search", { bg = "#edea1a", fg = '#45453a' })
+
         end,
     },
     -- {
