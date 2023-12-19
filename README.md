@@ -54,3 +54,5 @@ services:
 ```
 Check correct setup with `xclock`.
 
+### Github Copilot
+In order to start using [Github Copilot](https://github.com/features/copilot), run `:Copilot setup` when startup nvim for the first time.

@@ -34,6 +34,7 @@ services:
       - "devenv-zshextra:/home/${DEVENV_USER_USERNAME}/.zsh_extra"
       - "devenv-nvimconf:/home/${DEVENV_USER_USERNAME}/.config/nvim"
       - "devenv-nvimplugs:/home/${DEVENV_USER_USERNAME}/.local/share/nvim"
+      - "devenv-copilotconf:/home/${DEVENV_USER_USERNAME}/.config/github-copilot"
       - "devenv-scripts:/home/${DEVENV_USER_USERNAME}/scripts_runtime"
       - "${HOME}/devenv_exchange:/home/${DEVENV_USER_USERNAME}/devenv_exchange"
     ports:
@@ -55,3 +56,4 @@ volumes:
   devenv-zshextra:
   devenv-nvimconf:
   devenv-nvimplugs:
+  devenv-copilotconf:
