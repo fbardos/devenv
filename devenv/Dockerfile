@@ -65,6 +65,7 @@ COPY --chown=$USER_USERNAME build/.tmux.conf .
 RUN sudo apt-get update \
     && sudo apt-get install -y --no-install-recommends \
     build-essential \
+    libtiff5 \
     sudo \
     locales locales-all \
     curl \
