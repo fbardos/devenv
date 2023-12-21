@@ -1,7 +1,5 @@
 # DEVENV with Neovim, Python
 # Maintainer: Fabian Bardos <fabian@bardos.dev>
-# TODO: <Space-e> was before: showing error. Does not work in devenv. Why?
-
 
 # ############################################################################
 # ARGs / ENVs
@@ -20,6 +18,7 @@ ENV USER_USERNAME $USER_USERNAME
 # ############################################################################
 # SETUP user
 # ############################################################################
+
 RUN apt-get update && apt-get install -y --no-install-recommends sudo \
     && sudo rm -rf /var/lib/apt/lists/* \
     && useradd -m $USER_USERNAME && echo $USER_USERNAME:$USER_PASSWORD | chpasswd && adduser $USER_USERNAME sudo \

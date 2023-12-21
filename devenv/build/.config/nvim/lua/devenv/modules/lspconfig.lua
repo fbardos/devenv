@@ -31,6 +31,9 @@ return {
             -- opts.desc = "Show LSP type definitions"
             -- keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", opts) -- show lsp type definitions
 
+            opts.desc = "Show LSP error diagnostics"
+            keymap.set("n", "<leader>e", "<cmd>lua vim.diagnostic.open_float()<CR>", opts) -- show lsp error diagnostics
+
             opts.desc = "Show LSP references"
             keymap.set("n", "gr", "<cmd>Telescope lsp_references<CR>", opts) -- show definition, references
 
