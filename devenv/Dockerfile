@@ -1,6 +1,5 @@
 # DEVENV with Neovim, Python
 # Maintainer: Fabian Bardos <fabian@bardos.dev>
-# TODO: gt does not work inside nvim, but gT does
 # TODO: <Space-e> was before: showing error. Does not work in devenv. Why?
 
 

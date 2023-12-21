@@ -17,19 +17,20 @@ return {
             -- KEYBINDINGS
             opts.desc = "Go to declaration"
             keymap.set("n", "gD", vim.lsp.buf.declaration, opts) -- go to declaration
-            
+
             opts.desc = "Show LSP definitions"
             keymap.set("n", "gd", vim.lsp.buf.definition, opts) -- show lsp definitions
-            
+
             opts.desc = "Show documentation for what is under cursor"
             keymap.set("n", "K", vim.lsp.buf.hover, opts) -- show documentation for what is under cursor
-            
+
             opts.desc = "Show LSP implementations"
             keymap.set("n", "gi", vim.lsp.buf.implementation, opts) -- show lsp implementations
 
-            opts.desc = "Show LSP type definitions"
-            keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", opts) -- show lsp type definitions
-            
+            -- fbardos: disabled, because causes interference with gt (go-to next tab)
+            -- opts.desc = "Show LSP type definitions"
+            -- keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", opts) -- show lsp type definitions
+
             opts.desc = "Show LSP references"
             keymap.set("n", "gr", "<cmd>Telescope lsp_references<CR>", opts) -- show definition, references
 
