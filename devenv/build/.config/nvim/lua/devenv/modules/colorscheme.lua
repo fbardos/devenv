@@ -84,6 +84,12 @@ return {
             -- Change colors for search results (BG green, FG dark-grey)
             setHighlightGroup("Search", { bg = "#edea1a", fg = '#45453a' })
 
+            -- Change colors for git changes
+            setHighlightGroup("DiffAdd", { bg = "#0d7222" })
+            setHighlightGroup("DiffChange", { bg = "#664e00" })
+            setHighlightGroup("DiffDelete", { bg = "#84151a" })
+            setHighlightGroup("DiffText", { bg = "#997500" })
+
         end,
     },
     -- {
