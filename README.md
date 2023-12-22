@@ -14,6 +14,8 @@
 ==============================================================
 ```
 
+![DevEnv Screencast](screencast.gif)
+
 Developemnt environment inside docker, using the following core components:
 * neovim (latest)
 * Lazy.nvim setup
