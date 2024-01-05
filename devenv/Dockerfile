@@ -66,6 +66,7 @@ RUN sudo apt-get update \
     libtiff5 \
     sudo \
     locales locales-all \
+    openssh-client \
     curl \
     git \
     ca-certificates \
