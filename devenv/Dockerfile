@@ -137,6 +137,9 @@ RUN git clone --depth 1 https://github.com/romkatv/powerlevel10k.git $WORKDIR/.o
 # Install zsh plugins
 RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $WORKDIR/ext_repos/zsh-syntax-highlighting
 
+# Install Docker for sibling containers (Docker-out-of-Docker DooD)
+RUN curl -fsSL https://get.docker.com | sh
+
 # Set autocomplete for conda envs (& add lines before and after oh-my-zsh init)
 # Source https://stackoverflow.com/a/57793510
 RUN git clone https://github.com/esc/conda-zsh-completion $WORKDIR/ext_repos/conda-zsh-completion \

@@ -26,6 +26,9 @@ services:
       - DEVENV_ID_MAIL=${DEVENV_ID_MAIL}
       - DISPLAY=unix$DISPLAY  # export DISPLAY env variable for X server
     volumes:
+      # Use Docker for sibling containers (Docker-out-of-Docker DooD)
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      # Other volumes for persistance
       - "devenv-doc:/home/${DEVENV_USER_USERNAME}/doc"
       - "devenv-code:/home/${DEVENV_USER_USERNAME}/code"
       - "devenv-miniconda3:/home/${DEVENV_USER_USERNAME}/miniconda3"
