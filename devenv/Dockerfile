@@ -11,8 +11,10 @@ ARG USER_USERNAME="dev"
 ARG USER_PASSWORD="changeme"
 ARG ZSH_PREFIX=""
 ARG NODE_MAJOR=20
+ARG UNIX_TZ="Europe/Zurich"
 
 ENV USER_USERNAME $USER_USERNAME
+ENV TZ=$UNIX_TZ
 
 
 # ############################################################################
@@ -74,6 +76,13 @@ RUN sudo apt-get update \
     man \
     htop \
     && sudo rm -rf /var/lib/apt/lists/*
+
+# Set timezone
+RUN sudo apt-get update \
+    && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata \
+    && sudo rm -rf /var/lib/apt/lists/* \
+    && sudo ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && sudo dpkg-reconfigure -f noninteractive tzdata
 
 # Install more specific packages
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \

@@ -19,6 +19,7 @@ services:
         ZSH_PREFIX: "${DEVENV_ZSH_PREFIX}"
         UBUNTU_VERSION: "${DEVENV_UBUNTU_VERSION}"
         NODE_MAJOR: "${DEVENV_NODE_VERSION}"
+        UNIX_TZ: "${DEVENV_UNIX_TZ}"
     stdin_open: true  # docker run -i
     tty: true  # docker run -t
     environment:
