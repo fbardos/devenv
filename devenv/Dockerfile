@@ -7,6 +7,9 @@
 ARG UBUNTU_VERSION="22.04"
 FROM ubuntu:$UBUNTU_VERSION
 
+ARG UID=1000
+ARG GID=1000
+ARG HOST_DOCKER_GROUP_ID=999
 ARG USER_USERNAME="dev"
 ARG USER_PASSWORD="changeme"
 ARG ZSH_PREFIX=""
@@ -23,7 +26,9 @@ ENV TZ=$UNIX_TZ
 
 RUN apt-get update && apt-get install -y --no-install-recommends sudo \
     && sudo rm -rf /var/lib/apt/lists/* \
-    && useradd -m $USER_USERNAME && echo $USER_USERNAME:$USER_PASSWORD | chpasswd && adduser $USER_USERNAME sudo \
+    && groupadd -g $GID -o $USER_USERNAME \
+    && useradd -u $UID -g $GID -o -m $USER_USERNAME \
+    && echo $USER_USERNAME:$USER_PASSWORD | chpasswd && adduser $USER_USERNAME sudo \
     # Temporary: Ensure sudo group users are not asked for password
     && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
@@ -147,7 +152,9 @@ RUN git clone --depth 1 https://github.com/romkatv/powerlevel10k.git $WORKDIR/.o
 RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $WORKDIR/ext_repos/zsh-syntax-highlighting
 
 # Install Docker for sibling containers (Docker-out-of-Docker DooD)
-RUN curl -fsSL https://get.docker.com | sh
+RUN curl -fsSL https://get.docker.com | sh \
+    && sudo groupmod -g $HOST_DOCKER_GROUP_ID docker \
+    && sudo usermod -aG docker $USER_USERNAME
 
 # Set autocomplete for conda envs (& add lines before and after oh-my-zsh init)
 # Source https://stackoverflow.com/a/57793510
