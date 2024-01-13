@@ -41,10 +41,14 @@ services:
       - "devenv-miniconda3:/home/${DEVENV_USER_USERNAME}/miniconda3"
       - "devenv-ssh:/home/${DEVENV_USER_USERNAME}/.ssh"
       - "devenv-zsh:/home/${DEVENV_USER_USERNAME}/.zsh"
+      # The files in .zsh_extra get sourced when loading zsh
+      # Contains files like custom aliases or ENV variables.
       - "devenv-zshextra:/home/${DEVENV_USER_USERNAME}/.zsh_extra"
       - "devenv-nvimconf:/home/${DEVENV_USER_USERNAME}/.config/nvim"
       - "devenv-nvimplugs:/home/${DEVENV_USER_USERNAME}/.local/share/nvim"
       - "devenv-copilotconf:/home/${DEVENV_USER_USERNAME}/.config/github-copilot"
+      # scripts_runtime contains bash scripts which can be referenced from e.g. .zsh_extra
+      # as alias. This is used for changing conda envs.
       - "devenv-scripts:/home/${DEVENV_USER_USERNAME}/scripts_runtime"
       - "${HOME}/devenv_exchange:/home/${DEVENV_USER_USERNAME}/devenv_exchange"
     ports:
