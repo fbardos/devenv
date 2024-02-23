@@ -76,6 +76,7 @@ RUN sudo apt-get update \
     openssh-client \
     curl \
     git \
+    less \
     ca-certificates \
     gnupg \
     man \
@@ -187,6 +188,9 @@ RUN $CONDA_DIR/bin/conda init zsh \
     # Remove conda installer
     && rm -f miniconda3-installer.sh
 
+# Global git config
+# Set pager to previously installed less (for better scolling with vi keybinds)
+RUN git config --global core.pager "less -FRX"
 
 # ############################################################################
 # SYSTEM, after installation
