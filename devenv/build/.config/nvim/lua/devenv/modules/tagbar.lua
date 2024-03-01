@@ -7,6 +7,9 @@ return {
         -- Source: https://github.com/preservim/tagbar/issues/714
         vim.g["tagbar_use_cache"] = 0
 
+        -- disable alphabetical sorting
+        vim.g["tagbar_sort"] = 0
+
         -- set keymaps
         local keymap = vim.keymap
 
