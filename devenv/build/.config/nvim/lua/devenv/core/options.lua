@@ -35,3 +35,6 @@ vim.g["vim_json_syntax_conceal"] = 0
 vim.g["vim_markdown_conceal"] = 0
 vim.g["vim_markdown_conceal_code_blocks"] = 0
 
+-- highlight extra whitespace
+vim.api.nvim_set_hl(0, 'ExtraWhitespace', { bg = "#84151a" })
+vim.cmd.match({ 'ExtraWhitespace', '/\\s\\+$/' })
