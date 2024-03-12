@@ -73,6 +73,7 @@ RUN sudo apt-get update \
     libtiff5 \
     sudo \
     locales locales-all \
+    iproute2 \
     openssh-client \
     curl \
     git \
@@ -94,6 +95,7 @@ RUN sudo apt-get update \
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
     tree \
     fzf \
+    jq \
     vim \
     manpages-posix \
     && sudo rm -rf /var/lib/apt/lists/*
