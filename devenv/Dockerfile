@@ -67,7 +67,9 @@ COPY --chown=$USER_USERNAME build/.tmux.conf .
 # ############################################################################
 
 # Install base packages
+# Also, unminimize ubuntu to get manpages and other stuff.
 RUN sudo apt-get update \
+    && yes | sudo unminimize \
     && sudo apt-get install -y --no-install-recommends \
     build-essential \
     libtiff5 \
