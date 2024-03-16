@@ -19,6 +19,9 @@ ARG UNIX_TZ="Europe/Zurich"
 ENV USER_USERNAME $USER_USERNAME
 ENV TZ=$UNIX_TZ
 
+# Unminiminze Ubuntu to get manpages and other stuff
+RUN yes | unminimize
+
 
 # ############################################################################
 # SETUP user
@@ -69,11 +72,9 @@ COPY --chown=$USER_USERNAME build/.tmux.conf .
 # Install base packages
 # Also, unminimize ubuntu to get manpages and other stuff.
 RUN sudo apt-get update \
-    && yes | sudo unminimize \
     && sudo apt-get install -y --no-install-recommends \
     build-essential \
     libtiff5 \
-    sudo \
     locales locales-all \
     iproute2 \
     openssh-client \
@@ -82,7 +83,6 @@ RUN sudo apt-get update \
     less \
     ca-certificates \
     gnupg \
-    man \
     htop \
     && sudo rm -rf /var/lib/apt/lists/*
 
