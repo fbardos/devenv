@@ -46,6 +46,17 @@ return {
           })
         })
 
+        -- fbardos: Enable buffer completion list for sql files
+        -- is currently enough for writing sql files, do not need
+        -- a dedicated LSP
+        cmp.setup.filetype('sql', {
+            sources = cmp.config.sources({
+                { name = 'cmp_buffer' }, -- You can specify the `cmp_git` source if you were installed it.
+            }, {
+                { name = 'buffer' },
+            })
+        })
+
         -- Set configuration for specific filetype.
         cmp.setup.filetype('gitcommit', {
           sources = cmp.config.sources({
