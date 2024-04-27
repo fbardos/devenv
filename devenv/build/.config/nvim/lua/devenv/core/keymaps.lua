@@ -11,6 +11,7 @@ local keymap = vim.keymap
 -- Currently disabled. Can lead to unexpected behaviour when using term.
 -- keymap.set("n", "<Esc>", "<C-\><C-n>")
 -- vim.keymap.set("n", "<C-p>", require("nvim-tree.api").tree.toggle)
+keymap.set("n", "<leader>hh", "*N", { desc = "Highligh word occurences under cursor." })
 
 -- ---------------------------------------------------------------------------
 -- Coding
