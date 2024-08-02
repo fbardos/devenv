@@ -1,7 +1,6 @@
 #
 # This docker-compose file needs a corresponding .env file with the variables.
 #
-version: "3.7"
 name: ${DEVENV_PROJECT_NAME}
 
 # ############################################################################
