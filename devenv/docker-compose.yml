@@ -47,6 +47,8 @@ services:
       - "devenv-nvimconf:/home/${DEVENV_USER_USERNAME}/.config/nvim"
       - "devenv-nvimplugs:/home/${DEVENV_USER_USERNAME}/.local/share/nvim"
       - "devenv-copilotconf:/home/${DEVENV_USER_USERNAME}/.config/github-copilot"
+      # DBT profiles directory
+      - "devenv-dbt:/home/${DEVENV_USER_USERNAME}/.dbt"
       # scripts_runtime contains bash scripts which can be referenced from e.g. .zsh_extra
       # as alias. This is used for changing conda envs.
       - "devenv-scripts:/home/${DEVENV_USER_USERNAME}/scripts_runtime"
@@ -71,3 +73,4 @@ volumes:
   devenv-nvimconf:
   devenv-nvimplugs:
   devenv-copilotconf:
+  devenv-dbt:
