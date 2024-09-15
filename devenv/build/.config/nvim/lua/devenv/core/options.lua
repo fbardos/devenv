@@ -14,6 +14,9 @@ opt.cursorline = true
 opt.number = false
 opt.relativenumber = false
 
+-- disabled signcolumn by default for a cleaner look
+opt.signcolumn = "no"
+
 --  On newline, using c (insert comment leader automatically), r (after hitting
 --  enter), o (after hitting o or O)
 --  Source: https://superuser.com/questions/271023/can-i-disable-continuation-of-comments-to-the-next-line-in-vim
