@@ -10,8 +10,9 @@ opt.termguicolors = true
 opt.cursorline = true
 
 -- line number
-opt.number = true
-opt.relativenumber = true
+-- fbardos (2024-09-15): disabled number to keep it clean
+opt.number = false
+opt.relativenumber = false
 
 --  On newline, using c (insert comment leader automatically), r (after hitting
 --  enter), o (after hitting o or O)
