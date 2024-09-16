@@ -133,9 +133,9 @@ RUN mkdir ext_repos \
 RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim' \
     # Insall all NVIM plugins
-    && nvim --headless --noplugin "+Lazy! restore" +qall \
+    && nvim --headless "+Lazy! restore" +qa \
     # Update Treesitter parser
-    && nvim --headless +TSInstall +qall
+    && nvim --headless +TSInstall +qa
 
 # CLI (zsh)
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends nodejs \
@@ -192,6 +192,16 @@ RUN $CONDA_DIR/bin/conda init zsh \
     # Remove conda installer
     && rm -f miniconda3-installer.sh
 
+# Extend PATH to include conda
+ENV PATH=$CONDA_DIR/bin:$PATH
+
+# Install Mason LSPs
+# Unfortunately, it is currently no possible to run a MasonInstallAll
+# For the lsp names, use the names from Mason, not lspconfig
+# Must be placed after python installation, because it needs link to python3
+RUN nvim --headless "+MasonInstall typescript-language-server html-lsp css-lsp lua-language-server pyright" +qa
+RUN nvim --headless +MasonToolsInstallSync +qa
+
 # Global git config
 # Set pager to previously installed less (for better scolling with vi keybinds)
 RUN git config --global core.pager "less -FRX"
@@ -199,9 +209,6 @@ RUN git config --global core.pager "less -FRX"
 # ############################################################################
 # SYSTEM, after installation
 # ############################################################################
-
-# Extend PATH to include conda
-ENV PATH=$CONDA_DIR/bin:$PATH
 
 # Set image locale
 ENV LANG en_US.UTF-8
