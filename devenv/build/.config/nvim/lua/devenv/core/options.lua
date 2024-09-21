@@ -25,8 +25,8 @@ opt.formatoptions = "cro"
 -- clipboard
 opt.clipboard = "unnamedplus"
 
--- allow usage of mouse in editor
-opt.mouse = "a"
+-- disable mouse per default
+opt.mouse = ""
 
 -- Set tab size to 4 and use spaces
 opt.tabstop = 4
