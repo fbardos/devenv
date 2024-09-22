@@ -26,4 +26,3 @@ dependencies:
   - geoalchemy2
   - sqlalchemy
   - great-expectations
-  - visidata
