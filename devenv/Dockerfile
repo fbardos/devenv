@@ -9,7 +9,8 @@ FROM ubuntu:$UBUNTU_VERSION
 
 ARG UID=1000
 ARG GID=1000
-ARG HOST_DOCKER_GROUP_ID=999
+# By default, disable Docker-out-of-Docker DooD, OWASP rule 1
+# ARG HOST_DOCKER_GROUP_ID=999
 ARG USER_USERNAME="dev"
 ARG USER_PASSWORD="changeme"
 ARG ZSH_PREFIX=""
@@ -156,10 +157,10 @@ RUN git clone --depth 1 https://github.com/romkatv/powerlevel10k.git $WORKDIR/.o
 # Install zsh plugins
 RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $WORKDIR/ext_repos/zsh-syntax-highlighting
 
-# Install Docker for sibling containers (Docker-out-of-Docker DooD)
-RUN curl -fsSL https://get.docker.com | sh \
-    && sudo groupmod -g $HOST_DOCKER_GROUP_ID docker \
-    && sudo usermod -aG docker $USER_USERNAME
+# By default, disable Docker-out-of-Docker DooD
+# RUN curl -fsSL https://get.docker.com | sh \
+#     && sudo groupmod -g $HOST_DOCKER_GROUP_ID docker \
+#     && sudo usermod -aG docker $USER_USERNAME
 
 # Set autocomplete for conda envs (& add lines before and after oh-my-zsh init)
 # Source https://stackoverflow.com/a/57793510
