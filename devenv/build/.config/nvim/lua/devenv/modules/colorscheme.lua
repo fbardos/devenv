@@ -26,7 +26,6 @@ return {
     --     config = function()
     --         local onedark = require("onedark")
 
-    --         vim.g.airline_theme = 'onedark'
     --         vim.g.onedark_termcolors = 256
     --         vim.g.onedark_terminal_italics = 0
 
@@ -97,7 +96,6 @@ return {
     --     name = "catppuccin",
     --     priority = 1000,
     --     config = function()
-    --         vim.g.airline_theme = 'catppuccin'
     --         vim.cmd.colorscheme = "catppuccin-mocha"
     --         vim.cmd([[colorscheme catppuccin]])
     --     end,
