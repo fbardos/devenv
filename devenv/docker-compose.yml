@@ -18,11 +18,12 @@ services:
         # By default, disable Docker-out-of-Docker DooD, OWASP rule 1
         # HOST_DOCKER_GROUP_ID: "${DEVENV_HOST_DOCKER_GROUP_ID}"
         USER_USERNAME: "${DEVENV_USER_USERNAME}"
-        USER_PASSWORD: "${DEVENV_USER_PASSWORD}"
         ZSH_PREFIX: "${DEVENV_ZSH_PREFIX}"
         UBUNTU_VERSION: "${DEVENV_UBUNTU_VERSION}"
         NODE_MAJOR: "${DEVENV_NODE_VERSION}"
         UNIX_TZ: "${DEVENV_UNIX_TZ}"
+      secrets:
+        - user_password
     stdin_open: true  # docker run -i
     tty: true  # docker run -t
     # When specifying user here, then it would overwrite the value from the Dockerfile,
@@ -77,3 +78,7 @@ volumes:
   devenv-nvimplugs:
   devenv-copilotconf:
   devenv-dbt:
+
+secrets:
+  user_password:
+    file: ./user_password.env

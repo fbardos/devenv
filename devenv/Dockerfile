@@ -12,7 +12,6 @@ ARG GID=1000
 # By default, disable Docker-out-of-Docker DooD, OWASP rule 1
 # ARG HOST_DOCKER_GROUP_ID=999
 ARG USER_USERNAME="dev"
-ARG USER_PASSWORD="changeme"
 ARG ZSH_PREFIX=""
 ARG NODE_MAJOR=20
 ARG UNIX_TZ="Europe/Zurich"
@@ -28,11 +27,12 @@ RUN yes | unminimize
 # SETUP user
 # ############################################################################
 
-RUN apt-get update && apt-get install -y --no-install-recommends sudo \
+RUN --mount=type=secret,id=user_password,target=/run/secrets/user_password \
+    apt-get update && apt-get install -y --no-install-recommends sudo \
     && sudo rm -rf /var/lib/apt/lists/* \
     && groupadd -g $GID -o $USER_USERNAME \
     && useradd -u $UID -g $GID -o -m $USER_USERNAME \
-    && echo $USER_USERNAME:$USER_PASSWORD | chpasswd && adduser $USER_USERNAME sudo \
+    && echo $USER_USERNAME:$(cat /run/secrets/user_password) | chpasswd && adduser $USER_USERNAME sudo \
     # Temporary: Ensure sudo group users are not asked for password
     && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
