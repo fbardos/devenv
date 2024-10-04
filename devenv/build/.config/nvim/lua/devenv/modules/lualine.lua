@@ -20,7 +20,7 @@ return {
         }
 
         -- NORMAL
-        custom_theme.normal.a = { bg = colors.bg, fg = colors.con_green, gui = 'bold' }
+        custom_theme.normal.a = { bg = colors.bg, fg = colors.mid_black, gui = 'bold' }
         custom_theme.normal.b = { bg = colors.bg, fg = colors.mid_black }
         custom_theme.normal.c = { bg = colors.bg, fg = colors.mid_black }
 
