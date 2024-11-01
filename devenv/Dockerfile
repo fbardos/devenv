@@ -16,6 +16,8 @@ ARG ZSH_PREFIX=""
 ARG NODE_MAJOR=20
 ARG UNIX_TZ="Europe/Zurich"
 
+ARG NODE_VERSION=22
+
 ENV USER_USERNAME $USER_USERNAME
 ENV TZ=$UNIX_TZ
 
@@ -99,22 +101,19 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
     fzf \
     jq \
     vim \
+    wget \
     manpages-posix \
     && sudo rm -rf /var/lib/apt/lists/*
 
 # Nodejs
-RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
-    Node.js \
-    wget \
-    && sudo rm -rf /var/lib/apt/lists/*
-RUN sudo mkdir -p /etc/apt/keyrings \
-    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
-    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
-RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends nodejs \
-    && sudo rm -rf /var/lib/apt/lists/*
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
+RUN sudo apt-get install -y nodejs
+RUN node --version
+RUN npm --version
 
 # NeoVim
-RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends nodejs \
+# RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends nodejs \
+RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
     ninja-build gettext cmake unzip curl ripgrep xclip x11-apps exuberant-ctags \
     && sudo rm -rf /var/lib/apt/lists/*
 RUN npm install tree-sitter-cli
@@ -138,11 +137,11 @@ RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/p
     && nvim --headless +TSInstall +qa
 
 # CLI (zsh)
-RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends nodejs \
+RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
     bat \
     zsh \
     && sudo rm -rf /var/lib/apt/lists/*
-RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends nodejs tmux \
+RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends tmux \
     && sudo rm -rf /var/lib/apt/lists/*
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --unattended" \
     # OH-MY-ZSH installation does overwrite .zshrc (wtf). https://github.com/ohmyzsh/ohmyzsh/issues/4390
