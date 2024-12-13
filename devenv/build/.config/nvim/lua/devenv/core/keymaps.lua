@@ -31,6 +31,12 @@ keymap.set(
 keymap.set("v", "<expr> p", "'pgv\"'.v:register.'y`>'")
 keymap.set("v", "<expr> P", "'Pgv\"'.v:register.'y`>'")
 
+-- Copilot change accept
+vim.keymap.set('i', '<C-l>', 'copilot#Accept("\\<CR>")', {
+    expr = true,
+    replace_keycodes = false
+})
+vim.g.copilot_no_tab_map = true
 
 -- ---------------------------------------------------------------------------
 -- Python
