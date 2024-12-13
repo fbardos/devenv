@@ -8,7 +8,7 @@ dependencies:
   - pdbpp
   - pytest
   - numpy
-  - pandas>=2.1.3
+  - pandas
   - plotly
   - pymongo
   - requests
@@ -26,3 +26,5 @@ dependencies:
   - geoalchemy2
   - sqlalchemy
   - great-expectations
+  - fiona>=1.10  # CVE-2023-45853
+  - jupyter-lsp>=2.2.2  # CVE-2024-22415
