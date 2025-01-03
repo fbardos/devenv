@@ -96,10 +96,30 @@ RUN sudo apt-get update \
     && sudo ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
     && sudo dpkg-reconfigure -f noninteractive tzdata
 
-# Install more specific packages
+# Install homebrew, and install specific packages
+USER root
+RUN useradd -m -s /bin/zsh linuxbrew && \
+    usermod -aG sudo linuxbrew &&  \
+    mkdir -p /home/linuxbrew/.linuxbrew && \
+    chown -R linuxbrew: /home/linuxbrew/.linuxbrew
+USER linuxbrew
+WORKDIR /home/linuxbrew
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+ENV DEBIAN_FRONTEND=noninteractive \
+    USER="linuxbrew" \
+    CI="1" \
+    HOMEBREW_NO_ANALYTICS=1
+RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
+RUN brew --version
+RUN brew install fzf
+
+USER $USER_USERNAME
+WORKDIR $WORKDIR
+
+# Install more specific packages (apt)
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
     tree \
-    fzf \
     jq \
     vim \
     wget \
