@@ -2,13 +2,22 @@
 # Maintainer: Fabian Bardos <fabian@bardos.dev>
 
 # ############################################################################
-# ARGs / ENVs
+# ROOT: ARGs / ENVs
 # ############################################################################
-ARG UBUNTU_VERSION="22.04"
+ARG UBUNTU_VERSION="24.04"
 FROM ubuntu:$UBUNTU_VERSION
+USER root
 
-ARG UID=1000
-ARG GID=1000
+# Ubuntu images >= 24.04 have already a user with GID/UID == 1000, named ubuntu
+# Be careful when chaning these. When you run devenv before with docker volumes
+# then, this directories will be mounted as the original UID/GID, befor the migration.
+# When changing these, also change the owner of the filestructure, with:
+#
+#   $ docker run --rm -v my_volume:/data --user root alpine chown -R 1001:1001 /data
+#
+ARG USER_UID=1001
+ARG USER_GID=1001
+
 # By default, disable Docker-out-of-Docker DooD, OWASP rule 1
 # ARG HOST_DOCKER_GROUP_ID=999
 ARG USER_USERNAME="dev"
@@ -22,34 +31,36 @@ ENV USER_USERNAME $USER_USERNAME
 ENV TZ=$UNIX_TZ
 
 # Unminiminze Ubuntu to get manpages and other stuff
+# Starting with Ubuntu 24.04, unminimized is no longer included in the base image
+# and must therefore be installed manually
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    unminimize \
+    adduser \
+    && rm -rf /var/lib/apt/lists/*
 RUN yes | unminimize
 
 
 # ############################################################################
-# SETUP user
+# ROOT: SETUP user
 # ############################################################################
-
 RUN --mount=type=secret,id=user_password,target=/run/secrets/user_password \
     apt-get update && apt-get install -y --no-install-recommends sudo \
-    && sudo rm -rf /var/lib/apt/lists/* \
-    && groupadd -g $GID -o $USER_USERNAME \
-    && useradd -u $UID -g $GID -o -m $USER_USERNAME \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd -g $USER_GID -o $USER_USERNAME \
+    && useradd -u $USER_UID -g $USER_GID -m $USER_USERNAME \
     && echo $USER_USERNAME:$(cat /run/secrets/user_password) | chpasswd && adduser $USER_USERNAME sudo \
     # Temporary: Ensure sudo group users are not asked for password
-    && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+    && echo "${USER_USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Switch to newly created user, and set working dir
-USER $USER_USERNAME
-
-# Set ENV variables after creating user
-ENV WORKDIR /home/$USER_USERNAME
+USER $USER_UID:$USER_GID
+ENV WORKDIR=/home/$USER_USERNAME
 WORKDIR $WORKDIR
-
-ENV CONDA_DIR $WORKDIR/miniconda3
-
+ENV CONDA_DIR=$WORKDIR/miniconda3
 
 # ############################################################################
-# INIT Filesystem / Config
+# USER: INIT Filesystem / Config
 # ############################################################################
 
 # Create main directories (build_tmp gets deleted after building)
@@ -58,18 +69,18 @@ RUN mkdir code code/playground doc build_tmp scripts_runtime .zsh .ssh .zsh_extr
     && echo "AddKeysToAgent yes" >> $WORKDIR/.ssh/config
 
 # Copy config
-COPY --chown=$USER_USERNAME build/.gitconfig .
-COPY --chown=$USER_USERNAME build/environment-minimal-base.yml build_tmp/
-COPY --chown=$USER_USERNAME build/environment-playground.yml build_tmp/
-COPY --chown=$USER_USERNAME build/scripts ./scripts
-COPY --chown=$USER_USERNAME build/.config/ .config/
-COPY --chown=$USER_USERNAME --chmod=0755 entrypoint.sh ./scripts/entrypoint.sh
-COPY --chown=$USER_USERNAME build/.p10k.zsh .
-COPY --chown=$USER_USERNAME build/.zshrc .
-COPY --chown=$USER_USERNAME build/.tmux.conf .
+COPY --chown=$USER_UID:$USER_GID build/.gitconfig .
+COPY --chown=$USER_UID:$USER_GID build/environment-minimal-base.yml build_tmp/
+COPY --chown=$USER_UID:$USER_GID build/environment-playground.yml build_tmp/
+COPY --chown=$USER_UID:$USER_GID build/scripts ./scripts
+COPY --chown=$USER_UID:$USER_GID build/.config/ .config/
+COPY --chown=$USER_UID:$USER_GID --chmod=0755 entrypoint.sh ./scripts/entrypoint.sh
+COPY --chown=$USER_UID:$USER_GID build/.bashrc .
+COPY --chown=$USER_UID:$USER_GID build/.tmux.conf .
+COPY --chown=$USER_UID:$USER_GID build/.condarc .
 
 # ############################################################################
-# Install Software
+# USER: Install Software
 # ############################################################################
 
 # Install base packages
@@ -77,11 +88,12 @@ COPY --chown=$USER_USERNAME build/.tmux.conf .
 RUN sudo apt-get update \
     && sudo apt-get install -y --no-install-recommends \
     build-essential \
-    libtiff5 \
+    libtiff6 \
     locales locales-all \
     iproute2 \
     openssh-client \
     curl \
+    tmux \
     git \
     less \
     ca-certificates \
@@ -114,10 +126,10 @@ ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
 RUN brew --version
 RUN brew install fzf
 
-USER $USER_USERNAME
+# USER: Install more specific packages (apt)
+USER $USER_UID:$USER_GID
 WORKDIR $WORKDIR
 
-# Install more specific packages (apt)
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
     tree \
     jq \
@@ -126,21 +138,19 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
     manpages-posix \
     && sudo rm -rf /var/lib/apt/lists/*
 
-# Nodejs
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
+# USER: Nodejs
+RUN curl -fsSL "https://deb.nodesource.com/setup_${NODE_MAJOR}.x" | sudo bash -
 RUN sudo apt-get install -y nodejs
 RUN node --version
 RUN npm --version
 
-# NeoVim
-# RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends nodejs \
+# USER: NeoVim
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
     ninja-build gettext cmake unzip curl ripgrep xclip x11-apps exuberant-ctags \
     && sudo rm -rf /var/lib/apt/lists/*
 RUN npm install tree-sitter-cli
 RUN mkdir ext_repos \
-    ### Install NEOVIM
-    # -- Install via appimage (faster)
+    ### Install NEOVIM (via appimage, because faster)
     && wget -q https://github.com/neovim/neovim/releases/latest/download/nvim.appimage \
     && chmod u+x ./nvim.appimage \
     && ./nvim.appimage --appimage-extract \
@@ -149,7 +159,7 @@ RUN mkdir ext_repos \
     && sudo ln -s /opt/nvim/usr/bin/nvim /usr/local/bin/nvim \
     && rm nvim.appimage
 
-# NVIM configuration
+# USER: NVIM configuration
 RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim' \
     # Insall all NVIM plugins
@@ -202,7 +212,7 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py311_23.5.2-0-L
 RUN $CONDA_DIR/bin/conda install -n base conda-libmamba-solver \
     && $CONDA_DIR/bin/conda config --set solver libmamba
 
-# Install conda packages
+# USER: Install conda packages
 RUN $CONDA_DIR/bin/conda install -c conda-forge -n base isort neovim -y && $CONDA_DIR/bin/conda clean -ay
 RUN $CONDA_DIR/bin/conda env update --file build_tmp/environment-minimal-base.yml -n base && $CONDA_DIR/bin/conda clean -ay
 RUN $CONDA_DIR/bin/conda env create --file build_tmp/environment-playground.yml && $CONDA_DIR/bin/conda clean -ay
@@ -212,7 +222,7 @@ RUN $CONDA_DIR/bin/conda init zsh \
     # Remove conda installer
     && rm -f miniconda3-installer.sh
 
-# Extend PATH to include conda
+# USER: Extend PATH to include conda
 ENV PATH=$CONDA_DIR/bin:$PATH
 
 # Install Quarto
@@ -220,14 +230,14 @@ run wget -q -O quarto.deb 'https://github.com/quarto-dev/quarto-cli/releases/dow
     && sudo apt install -y ./quarto.deb \
     && rm quarto.deb
 
-# Install Mason LSPs
-# Unfortunately, it is currently no possible to run a MasonInstallAll
+# USER: Install Mason LSPs
+# Unfortunately, it is currently not possible to run a MasonInstallAll
 # For the lsp names, use the names from Mason, not lspconfig
 # Must be placed after python installation, because it needs link to python3
 RUN nvim --headless "+MasonInstall typescript-language-server html-lsp css-lsp lua-language-server pyright" +qa
 RUN nvim --headless +MasonToolsInstallSync +qa
 
-# Global git config
+# USER: Global git config
 # Set pager to previously installed less (for better scolling with vi keybinds)
 RUN git config --global core.pager "less -FRX"
 
@@ -236,17 +246,17 @@ RUN git config --global core.pager "less -FRX"
 # SYSTEM, after installation
 # ############################################################################
 
-# Set image locale
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+# USER Set image locale
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
 
 
 # ############################################################################
 # FINALIZING / CLEANUP
 # ############################################################################
 
-# Delete temporary build files
+# USER: Delete temporary build files
 RUN rm -rf build_tmp
 
 # Reenable sudo password requirement after building

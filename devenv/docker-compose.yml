@@ -13,8 +13,8 @@ services:
     build:
       context: .
       args:
-        UID: "${DEVENV_UID}"
-        GID: "${DEVENV_GID}"
+        USER_UID: "${DEVENV_UID}"
+        USER_GID: "${DEVENV_GID}"
         # By default, disable Docker-out-of-Docker DooD, OWASP rule 1
         # HOST_DOCKER_GROUP_ID: "${DEVENV_HOST_DOCKER_GROUP_ID}"
         USER_USERNAME: "${DEVENV_USER_USERNAME}"
@@ -25,6 +25,8 @@ services:
       secrets:
         - user_password
     stdin_open: true  # docker run -i
+    hostname: devenv
+    user: "${DEVENV_UID}:${DEVENV_GID}"
     tty: true  # docker run -t
     # When specifying user here, then it would overwrite the value from the Dockerfile,
     # where uid/gid for $USER_USERNAME was already set. Therefore, disable the option user.
