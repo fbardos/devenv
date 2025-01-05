@@ -24,10 +24,7 @@ ARG USER_USERNAME="dev"
 ARG ZSH_PREFIX=""
 ARG NODE_MAJOR=20
 ARG UNIX_TZ="Europe/Zurich"
-
-ARG NODE_VERSION=22
-
-ENV USER_USERNAME $USER_USERNAME
+ENV USER_USERNAME=$USER_USERNAME
 ENV TZ=$UNIX_TZ
 
 # Unminiminze Ubuntu to get manpages and other stuff
@@ -64,7 +61,7 @@ ENV CONDA_DIR=$WORKDIR/miniconda3
 # ############################################################################
 
 # Create main directories (build_tmp gets deleted after building)
-RUN mkdir code code/playground doc build_tmp scripts_runtime .zsh .ssh .zsh_extra \
+RUN mkdir code code/playground doc build_tmp scripts_runtime .bash .ssh .bash_extra \
     && chmod 700 $WORKDIR/.ssh \
     && echo "AddKeysToAgent yes" >> $WORKDIR/.ssh/config
 
@@ -167,60 +164,23 @@ RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/p
     # Update Treesitter parser
     && nvim --headless +TSInstall +qa
 
-# CLI (zsh)
-RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
-    bat \
-    zsh \
-    && sudo rm -rf /var/lib/apt/lists/*
-RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends tmux \
-    && sudo rm -rf /var/lib/apt/lists/*
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --unattended" \
-    # OH-MY-ZSH installation does overwrite .zshrc (wtf). https://github.com/ohmyzsh/ohmyzsh/issues/4390
-    && cat ~/.zshrc.pre-oh-my-zsh >> ~/.zshrc
-RUN git clone --depth 1 https://github.com/romkatv/powerlevel10k.git $WORKDIR/.oh-my-zsh/custom/themes/powerlevel10k \
-    # Install gitstatusd manually to prevent download each time zsh gets started in fresh container
-    && sh -c $WORKDIR/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/install -f \
-    # Change default shell to zsh for user
-    && sudo chsh -s $(which zsh) $USER_USERNAME
-
-# Install zsh plugins
-RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $WORKDIR/ext_repos/zsh-syntax-highlighting
-
-# By default, disable Docker-out-of-Docker DooD
-# RUN curl -fsSL https://get.docker.com | sh \
-#     && sudo groupmod -g $HOST_DOCKER_GROUP_ID docker \
-#     && sudo usermod -aG docker $USER_USERNAME
-
-# Set autocomplete for conda envs (& add lines before and after oh-my-zsh init)
-# Source https://stackoverflow.com/a/57793510
-RUN git clone https://github.com/esc/conda-zsh-completion $WORKDIR/ext_repos/conda-zsh-completion \
-    && sed -i "/source \$ZSH\/oh-my-zsh.sh/ifpath\+=~/ext_repos/conda-zsh-completion" $WORKDIR/.zshrc \
-    && sed -i "/source \$ZSH\/oh-my-zsh.sh/acompinit conda" $WORKDIR/.zshrc \
-    ### Set zsh theme
-    && echo "source ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k/powerlevel10k.zsh-theme" >> ~/.zshrc \
-    # Add prefix for shell if ZSH_PREFIX is provided
-    && sed -i -E "s/#\W(.*POWERLEVEL9K_DIR_PREFIX=').*(')/\1$ZSH_PREFIX\2/" $WORKDIR/.p10k.zsh
-
-# Miniconda3
+# USER: Miniconda3
 # Temporary fix because of libmamba-solver error (gh/anaconda-issues/#13123): pinned to miniconda 23.5.2 (py3.11)
 # TODO: Revert as soon as fixed
 RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py311_23.5.2-0-Linux-x86_64.sh -O miniconda3-installer.sh \
     # && wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda3-installer.sh \
     && /bin/bash ./miniconda3-installer.sh -b -p $CONDA_DIR
 
-# Add libmamba-solver for conda
-RUN $CONDA_DIR/bin/conda install -n base conda-libmamba-solver \
-    && $CONDA_DIR/bin/conda config --set solver libmamba
+# USER: Add libmamba-solver for conda (config is set inside .condarc)
+RUN $CONDA_DIR/bin/conda install -n base conda-libmamba-solver
 
 # USER: Install conda packages
 RUN $CONDA_DIR/bin/conda install -c conda-forge -n base isort neovim -y && $CONDA_DIR/bin/conda clean -ay
 RUN $CONDA_DIR/bin/conda env update --file build_tmp/environment-minimal-base.yml -n base && $CONDA_DIR/bin/conda clean -ay
 RUN $CONDA_DIR/bin/conda env create --file build_tmp/environment-playground.yml && $CONDA_DIR/bin/conda clean -ay
 
-# Tell conda to initialize zsh
-RUN $CONDA_DIR/bin/conda init zsh \
-    # Remove conda installer
-    && rm -f miniconda3-installer.sh
+# USER: Tell conda to initialize bash (already done manually, would overwrite otherwise)
+RUN rm -f miniconda3-installer.sh
 
 # USER: Extend PATH to include conda
 ENV PATH=$CONDA_DIR/bin:$PATH

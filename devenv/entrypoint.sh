@@ -1,6 +1,6 @@
 #!/bin/bash
 # #############################################################
-# ENTRYPOINT for devevn
+# ENTRYPOINT for devenv
 # #############################################################
 echo -e "=============================================================="
 echo -e "                                                              "
@@ -16,6 +16,7 @@ echo -e "                                                              "
 echo -e "=============================================================="
 echo -e "                                                              "
 
+### Create ssh keys if not already present ####################
 # grep .pub is needed, otherwise will match inserted config file from Dockerfile
 if [ -n "$(ls -A .ssh | grep .pub 2>/dev/null)" ]
 then
@@ -30,11 +31,10 @@ echo -e "[STARTUP] Start ssh-agent"
 echo -e "[STARTUP] Going to ask for containers ssh key passphrase..."
 ssh-add ~/.ssh/ed25519
 
+### git config ################################################
 echo -e "[STARTUP] Set git user..."
 git config --global user.name $DEVENV_ID_NAME
 git config --global user.email $DEVENV_ID_MAIL
 
-# #############################################################
-# FINALLY start ZSH
-# #############################################################
-/bin/zsh -i
+### Finally start bash ########################################
+bash -i
