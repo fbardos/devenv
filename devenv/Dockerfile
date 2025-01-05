@@ -225,8 +225,8 @@ RUN $CONDA_DIR/bin/conda init zsh \
 # USER: Extend PATH to include conda
 ENV PATH=$CONDA_DIR/bin:$PATH
 
-# Install Quarto
-run wget -q -O quarto.deb 'https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.40/quarto-1.6.40-linux-amd64.deb' \
+# USER: Install Quarto
+RUN wget -q -O quarto.deb 'https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.40/quarto-1.6.40-linux-amd64.deb' \
     && sudo apt install -y ./quarto.deb \
     && rm quarto.deb
 
