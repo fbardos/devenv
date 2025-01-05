@@ -108,10 +108,10 @@ RUN sudo apt-get update \
     && sudo ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
     && sudo dpkg-reconfigure -f noninteractive tzdata
 
-# Install homebrew, and install specific packages
+# ROOT/linuxbrew: Install homebrew, and install specific packages
 USER root
-RUN useradd -m -s /bin/zsh linuxbrew && \
-    usermod -aG sudo linuxbrew &&  \
+RUN groupadd -g 1002 linuxbrew && \
+    useradd -m -u 1002 -g 1002 -s /bin/bash linuxbrew && \
     mkdir -p /home/linuxbrew/.linuxbrew && \
     chown -R linuxbrew: /home/linuxbrew/.linuxbrew
 USER linuxbrew
