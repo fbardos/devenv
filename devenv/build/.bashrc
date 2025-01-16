@@ -145,7 +145,7 @@ PATH="/snap/bin:$PATH"
 # Increase HIST size, set HIST location
 # don't put duplicate lines or lines starting with space in the history.
 HISTCONTROL=ignoreboth
-HISTFILESIZE=
+HISTFILESIZE=20000
 HISTSIZE=10000
 HISTFILE=.bash/.bash_history
 
