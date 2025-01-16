@@ -90,6 +90,7 @@ RUN sudo apt-get update \
     iproute2 \
     openssh-client \
     curl \
+    rsync \
     tmux \
     git \
     less \
