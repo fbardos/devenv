@@ -1,7 +1,7 @@
 local opt = vim.opt
 
 -- set shell
-opt.shell = "/bin/zsh"
+opt.shell = "/bin/bash"
 
 -- enable termguicolors
 opt.termguicolors = true
