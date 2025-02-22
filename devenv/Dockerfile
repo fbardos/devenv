@@ -149,7 +149,9 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 RUN npm install tree-sitter-cli
 RUN mkdir ext_repos \
     ### Install NEOVIM (via appimage, because faster)
-    && wget -q https://github.com/neovim/neovim/releases/latest/download/nvim.appimage \
+    # 2025-02-01 (fbardos): Naming in nvim releases has changed.
+    # && wget -q https://github.com/neovim/neovim/releases/latest/download/nvim.appimage \
+    && wget -q -O nvim.appimage https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.appimage \
     && chmod u+x ./nvim.appimage \
     && ./nvim.appimage --appimage-extract \
     && sudo mv ./squashfs-root /opt/nvim \
