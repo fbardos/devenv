@@ -22,9 +22,26 @@ keymap.set("n", "<leader>o", "o<Esc>")
 keymap.set("n", "<leader>O", "O<Esc>")
 
 -- toggle colorcolumn
-keymap.set(
-    "n", "<leader>m", "<cmd>exec 'set colorcolumn=' . (&colorcolumn == '' ? '120' : '')<CR>",
-    { desc = "Toggle colorcolumn for 120 line characters." }
+function ToggleColorColumns()
+    if vim.wo.colorcolumn == "" then
+        vim.wo.colorcolumn = "81,89,121"
+
+        -- Set different colors for different columns
+        -- in NVIM, only one ColorColumn color is supported out of the box
+        vim.cmd([[highlight ColorColumn guibg=#9E1E1E]])
+    else
+	-- reset
+        vim.wo.colorcolumn = ""
+        vim.cmd([[highlight ColorColumn guibg=#212121]])
+        vim.opt.cursorline = true -- keep horizontal line
+    end
+end
+
+vim.api.nvim_set_keymap(
+    "n",
+    "<leader>m",
+    ":lua ToggleColorColumns()<CR>",
+    { desc = "Toggle colorcolumn for 80, 88 and 120 line characters.", noremap = true, silent = true }
 )
 
 -- Make it possible to paste many times over selected text
