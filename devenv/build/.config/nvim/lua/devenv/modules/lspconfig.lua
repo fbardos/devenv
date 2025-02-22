@@ -104,8 +104,13 @@ return {
             settings = {
                 python = {
                     analysis = {
-                        -- Disable auto-complete suggestions in autocomplete (a lot of suggestions)
-                        autoImportCompletions = false,
+			-- 2025-02-22 (fbardos): After some consideration, temporary reenable autoImportCompletions
+			-- This will make autoimport easier when inside a python file (accept with <Return>).
+			-- After this, isort will sort the imports, but make sure that force_single_line = true is set
+			-- in pyproject.toml.
+                        autoImportCompletions = true,
+                        -- -- Disable auto-complete suggestions in autocomplete (a lot of suggestions)
+                        -- autoImportCompletions = false,
                         -- Performance improvements
                         autoSearchPaths = true,
                         useLibraryCodeForTypes = true,
