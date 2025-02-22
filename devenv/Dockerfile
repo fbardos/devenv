@@ -189,7 +189,7 @@ RUN rm -f miniconda3-installer.sh
 ENV PATH=$CONDA_DIR/bin:$PATH
 
 # USER: Install Quarto
-RUN wget -q -O quarto.deb 'https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.40/quarto-1.6.40-linux-amd64.deb' \
+RUN wget -q -O quarto.deb 'https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.41/quarto-1.6.41-linux-amd64.deb' \
     && sudo apt install -y ./quarto.deb \
     && rm quarto.deb
 
