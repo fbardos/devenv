@@ -48,6 +48,24 @@ vim.api.nvim_set_keymap(
 keymap.set("v", "<expr> p", "'pgv\"'.v:register.'y`>'")
 keymap.set("v", "<expr> P", "'Pgv\"'.v:register.'y`>'")
 
+-- highlight the first 88 characters in a different color
+-- than the rest to mark too long lines
+vim.api.nvim_set_hl(0, "TooLongLine", { bg = "#664e00" })
+local tooLongMatchId = vim.fn.matchadd("TooLongLine", "\\%>88v.*")
+function ToggleTooLongHighlight()
+  if tooLongMatchId then
+    vim.fn.matchdelete(tooLongMatchId)
+    tooLongMatchId = nil
+  else
+    tooLongMatchId = vim.fn.matchadd("TooLongLine", "\\%>88v.*")
+  end
+end
+
+vim.api.nvim_set_keymap(
+  "n", "<Leader>hl", "<cmd>lua ToggleTooLongHighlight()<CR>",
+  { noremap = true, silent = true }
+)
+
 -- Copilot change accept
 vim.keymap.set('i', '<C-l>', 'copilot#Accept("\\<CR>")', {
     expr = true,
