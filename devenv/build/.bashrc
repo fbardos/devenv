@@ -144,13 +144,17 @@ PATH="/snap/bin:$PATH"
 
 # Increase HIST size, set HIST location
 # don't put duplicate lines or lines starting with space in the history.
-HISTCONTROL=ignoreboth
+HISTCONTROL=ignoredups:erasedups
 HISTFILESIZE=20000
 HISTSIZE=10000
 HISTFILE=.bash/.bash_history
 
 # append to the history file, don't overwrite it
 shopt -s histappend
+
+# Source: https://unix.stackexchange.com/a/18443
+PROMPT_COMMAND="history -n; history -w; history -c; history -r; $PROMPT_COMMAND"
+
 
 ##############################################################################
 # ALIAS
