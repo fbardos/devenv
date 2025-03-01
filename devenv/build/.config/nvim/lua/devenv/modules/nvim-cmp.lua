@@ -12,6 +12,10 @@ return {
         -- Set up nvim-cmp.
         local cmp = require("cmp")
 
+	-- set highlight group for window
+	vim.api.nvim_set_hl(0, "CmpNormal", { bg = "#010057" })
+	vim.api.nvim_set_hl(0, "DocNormal", { bg = "#090088" })
+
         cmp.setup({
           snippet = {
             -- REQUIRED - you must specify a snippet engine
@@ -23,6 +27,12 @@ return {
             end,
           },
           window = {
+	    completion = {
+	      winhighlight = "Normal:CmpNormal",
+            },
+            documentation = {
+	      winhighlight = "Normal:DocNormal",
+            },
             -- completion = cmp.config.window.bordered(),
             -- documentation = cmp.config.window.bordered(),
           },
