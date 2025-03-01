@@ -159,14 +159,20 @@ PROMPT_COMMAND="history -n; history -w; history -c; history -r; $PROMPT_COMMAND"
 ##############################################################################
 # ALIAS
 ##############################################################################
+
 ### GENERAL
 alias ll='ls -lah'
 alias calc='ipython'
 alias todo='cd ~/Documents/todos/ && nvim -S .vim'
 
 ### PYTHON ENVs
-alias play='source ~/scripts/play.sh'  # source is needed, otherwise gets run in subshell
+# use `source` when the command needs to be run in this shell (not any subshell)
+alias play='source ~/scripts/play.sh'
 alias cdpack='source ~/scripts/cd_packages.sh'
+
+### GIT
+alias gs='git status'
+alias gl='git log --all --graph --name-status'
 
 ##############################################################################
 # ADDITIONAL SOURCE
