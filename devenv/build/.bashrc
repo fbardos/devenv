@@ -147,13 +147,14 @@ PATH="/snap/bin:$PATH"
 HISTCONTROL=ignoredups:erasedups
 HISTFILESIZE=20000
 HISTSIZE=10000
-HISTFILE=.bash/.bash_history
+HISTFILE=~/.bash/.bash_history
 
 # append to the history file, don't overwrite it
 shopt -s histappend
 
 # Source: https://unix.stackexchange.com/a/18443
-PROMPT_COMMAND="history -n; history -w; history -c; history -r; $PROMPT_COMMAND"
+# 2025-03-02 (fbardos) try out another line: https://unix.stackexchange.com/a/1292
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
 
 
 ##############################################################################
@@ -185,6 +186,9 @@ then
         source "$file"
     done
 fi
+
+# Source git completions to enable auto-complete
+source /usr/share/bash-completion/completions/git
 
 ##############################################################################
 # LAST
