@@ -173,7 +173,7 @@ alias cdpack='source ~/scripts/cd_packages.sh'
 
 ### GIT
 alias gs='git status'
-alias gl='git log --all --graph --name-status'
+alias gl='git log --all --graph --name-status --date-order'
 
 ##############################################################################
 # ADDITIONAL SOURCE
