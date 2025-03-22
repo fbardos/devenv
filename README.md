@@ -1,4 +1,7 @@
 # DEVENV
+
+Development environment inside docker, with [neovim](https://neovim.io) and [Python](https://python.org).
+
 ```text
 ==============================================================
                                                               
@@ -16,12 +19,10 @@
 
 ![DevEnv Screencast](screencast.gif)
 
-Developemnt environment inside docker, using the following core components:
-* neovim (latest)
-* Lazy.nvim setup
-* Python (2 prepared conda envs)
-* Miniconda3
-* oh-my-zsh
+DevEnv uses the following core components:
+* neovim (latest), with a [Lazy.nvim](https://github.com/folke/lazy.nvim) setup
+* Python 3, with 2 prepared Miniconda envs
+* bash
 
 ## Setup
 
