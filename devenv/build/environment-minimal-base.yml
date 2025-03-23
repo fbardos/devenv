@@ -11,3 +11,4 @@ dependencies:
   - isort
   - ipython
   - ipdb
+  - black
