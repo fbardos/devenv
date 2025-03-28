@@ -59,7 +59,18 @@ return {
             sections = {
                 lualine_a = {'mode'},
                 lualine_b = {'branch', 'diff'},
-                lualine_c = {'%f', '%r'},
+                lualine_c = {
+		    {
+			'filename',
+			file_status = true,
+			symbols = {
+			    modified = '[+]',
+			    readonly = '[-]',
+			    unnamed = '[No Name]',
+			    newfile = '[New]',
+			},
+	            },
+	        },
                 lualine_x = {
                     {
                         'diagnostics',
