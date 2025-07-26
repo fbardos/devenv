@@ -1,0 +1,7 @@
+pdbpp
+requests
+pynvim
+isort
+ipython
+ipdb
+black

@@ -55,8 +55,6 @@ RUN --mount=type=secret,id=user_password,target=/run/secrets/user_password \
 USER $USER_UID:$USER_GID
 ENV WORKDIR=/home/$USER_USERNAME
 WORKDIR $WORKDIR
-ENV CONDA_DIR=$WORKDIR/miniconda3
-
 
 # ############################################################################
 # USER: INIT Filesystem / Config
@@ -119,33 +117,37 @@ RUN brew --version
 RUN brew install fzf
 
 # ############################################################################
-# USER: Miniconda3
+# USER: uv / Python
 # ############################################################################
-# Miniconda3 with the env building takes up a big part of the build time.
-# To address this, install Miniconda3 before setting up NVIM and other configs.
-# Otherwise, the installation of the env gets executed on allmost every build.
+# uv [1] combines multiple separate tool together and makes the handling
+# of projects with different dependencies and python versions easier.
+#
+# [1] https://github.com/astral-sh/uv
+USER root
+WORKDIR $WORKDIR
+
+## PYTHON and base packages
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends python3 python3-venv python3-pip \
+    # clean up apt caches to keep the image small
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a shared virtual environment for global pip packages
+COPY --chown=$USER_UID:$USER_GID build/requirements-minimal.txt build_tmp/
+
+ENV VENV_PATH=/opt/venv
+RUN python3 -m venv $VENV_PATH && \
+    # Upgrade pip inside the venv
+    $VENV_PATH/bin/pip install --upgrade pip && \
+    # Install desired packages into the venv
+    $VENV_PATH/bin/pip install --no-cache-dir -r build_tmp/requirements-minimal.txt
+
+## uv
 USER $USER_UID:$USER_GID
 WORKDIR $WORKDIR
-COPY --chown=$USER_UID:$USER_GID build/environment-minimal-base.yml build_tmp/
-COPY --chown=$USER_UID:$USER_GID build/environment-playground.yml build_tmp/
-COPY --chown=$USER_UID:$USER_GID build/.condarc .
-
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py312_25.1.1-2-Linux-x86_64.sh -O miniconda3-installer.sh \
-    && /bin/bash ./miniconda3-installer.sh -b -p $CONDA_DIR
-
-# USER: Add libmamba-solver for conda (config is set inside .condarc)
-RUN $CONDA_DIR/bin/conda install -n base conda-libmamba-solver
-
-# USER: Install conda packages
-RUN $CONDA_DIR/bin/conda install -c conda-forge -n base isort neovim -y && $CONDA_DIR/bin/conda clean -ay
-RUN $CONDA_DIR/bin/conda env update --file build_tmp/environment-minimal-base.yml -n base && $CONDA_DIR/bin/conda clean -ay
-RUN $CONDA_DIR/bin/conda env create --file build_tmp/environment-playground.yml && $CONDA_DIR/bin/conda clean -ay
-
-# USER: Tell conda to initialize bash (already done manually, would overwrite otherwise)
-RUN rm -f miniconda3-installer.sh
-
-# USER: Extend PATH to include conda
-ENV PATH=$CONDA_DIR/bin:$PATH
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ENV PATH="$VENV_PATH/bin/:$PATH"
 
 # ############################################################################
 # USER: Install additional software (apt)
@@ -161,7 +163,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
     && sudo rm -rf /var/lib/apt/lists/*
 
 # USER: Install Quarto
-RUN wget -q -O quarto.deb 'https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.41/quarto-1.6.41-linux-amd64.deb' \
+RUN wget -q -O quarto.deb 'https://github.com/quarto-dev/quarto-cli/releases/download/v1.7.32/quarto-1.7.32-linux-amd64.deb' \
     && sudo apt install -y ./quarto.deb \
     && rm quarto.deb
 
@@ -228,6 +230,10 @@ ENV LC_ALL=en_US.UTF-8
 COPY --chown=$USER_UID:$USER_GID build/scripts ./scripts
 COPY --chown=$USER_UID:$USER_GID --chmod=0755 entrypoint.sh ./scripts/entrypoint.sh
 COPY --chown=$USER_UID:$USER_GID build/.bashrc .
+
+# add uv autocompletion
+RUN echo 'eval "$(uv generate-shell-completion bash)"' >> ~/.bashrc
+
 COPY --chown=$USER_UID:$USER_GID build/.tmux.conf .
 
 # USER: Delete temporary build files
