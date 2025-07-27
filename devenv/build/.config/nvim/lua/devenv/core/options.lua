@@ -45,3 +45,12 @@ vim.cmd.match({ 'ExtraWhitespace', '/\\s\\+$/' })
 
 -- set python provider to system-wide python with the installed pynvim package
 vim.g.python3_host_prog = '/opt/venv/bin/python'
+
+-- set diagnostics
+vim.diagnostic.config({
+    underline = true,
+    virtual_text = true,
+    signs = false,
+    update_in_insert = false,
+    severity_sort = true,
+})

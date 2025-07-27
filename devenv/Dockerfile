@@ -206,7 +206,7 @@ RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/p
 # Unfortunately, it is currently not possible to run a MasonInstallAll
 # For the lsp names, use the names from Mason, not lspconfig
 # Must be placed after python installation, because it needs link to python3
-RUN nvim --headless "+MasonInstall typescript-language-server html-lsp css-lsp lua-language-server pyright" +qa
+RUN nvim --headless "+MasonInstall html-lsp css-lsp lua-language-server pyright" +qa
 RUN nvim --headless +MasonToolsInstallSync +qa
 
 # USER: Global git config
