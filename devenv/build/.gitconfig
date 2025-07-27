@@ -7,8 +7,20 @@
 [difftool "nvimdiff"]
     cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 [credential]
-	helper = cache
+    helper = cache
 [init]
-	defaultBranch = main
+    defaultBranch = main
 [core]
-	editor = nvim
+    editor = nvim
+    initDefaultBranch = main
+[user]
+    name = Fabian Bardos
+    email = fabian@bardos.dev
+    signingkey = ~/.ssh/ed25519.pub
+[gpg]
+    format = ssh
+[commit]
+    gpgsign = true
+[alias]
+    s = status
+    l = log --all --graph --name-status --date-order

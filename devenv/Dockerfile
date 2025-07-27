@@ -228,7 +228,6 @@ ENV LC_ALL=en_US.UTF-8
 # FINALIZING / CLEANUP
 # ############################################################################
 COPY --chown=$USER_UID:$USER_GID build/scripts ./scripts
-COPY --chown=$USER_UID:$USER_GID --chmod=0755 entrypoint.sh ./scripts/entrypoint.sh
 COPY --chown=$USER_UID:$USER_GID build/.bashrc .
 
 # add uv autocompletion

@@ -152,9 +152,7 @@ alias todo='cd ~/Documents/todos/ && nvim -S .vim'
 alias play='source ~/scripts/play.sh'
 alias cdpack='source ~/scripts/cd_packages.sh'
 
-### GIT
-alias gs='git status'
-alias gl='git log --all --graph --name-status --date-order'
+# git aliases are defined in .gitconfig
 
 ##############################################################################
 # ADDITIONAL SOURCE
