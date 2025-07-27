@@ -23,7 +23,7 @@ ARG USER_GID=1001
 # ARG HOST_DOCKER_GROUP_ID=999
 ARG USER_USERNAME="dev"
 ARG ZSH_PREFIX=""
-ARG NODE_MAJOR=20
+ARG NODE_MAJOR=22
 ARG UNIX_TZ="Europe/Zurich"
 ENV USER_USERNAME=$USER_USERNAME
 ENV TZ=$UNIX_TZ
@@ -89,6 +89,7 @@ RUN sudo apt-get update \
     gnupg \
     htop \
     wget \
+    fzf \
     && sudo rm -rf /var/lib/apt/lists/*
 
 # Set timezone
@@ -98,23 +99,7 @@ RUN sudo apt-get update \
     && sudo ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
     && sudo dpkg-reconfigure -f noninteractive tzdata
 
-# ROOT/linuxbrew: Install homebrew, and install specific packages
-USER root
-RUN groupadd -g 1002 linuxbrew && \
-    useradd -m -u 1002 -g 1002 -s /bin/bash linuxbrew && \
-    mkdir -p /home/linuxbrew/.linuxbrew && \
-    chown -R linuxbrew: /home/linuxbrew/.linuxbrew
-USER linuxbrew
-WORKDIR /home/linuxbrew
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-ENV DEBIAN_FRONTEND=noninteractive \
-    USER="linuxbrew" \
-    CI="1" \
-    HOMEBREW_NO_ANALYTICS=1
-RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
-RUN brew --version
-RUN brew install fzf
 
 # ############################################################################
 # USER: uv / Python
@@ -167,7 +152,13 @@ RUN wget -q -O quarto.deb 'https://github.com/quarto-dev/quarto-cli/releases/dow
     && sudo apt install -y ./quarto.deb \
     && rm quarto.deb
 
+# USER: rustc / cargo
+# cargo is used by mason to install LSPs, and also to install the tree-sitter
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable
+ENV PATH="~/.cargo/bin:${PATH}"
+
 # USER: Nodejs
+# npm is used by mason to install LSPs
 RUN curl -fsSL "https://deb.nodesource.com/setup_${NODE_MAJOR}.x" | sudo bash -
 RUN sudo apt-get install -y nodejs
 RUN node --version
@@ -179,7 +170,7 @@ RUN npm --version
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
     ninja-build gettext cmake unzip curl ripgrep xclip x11-apps exuberant-ctags \
     && sudo rm -rf /var/lib/apt/lists/*
-RUN npm install tree-sitter-cli
+RUN cargo install --locked tree-sitter-cli
 RUN mkdir ext_repos \
     ### Install NEOVIM (via appimage, because faster)
     # 2025-02-01 (fbardos): Naming in nvim releases has changed.
