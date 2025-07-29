@@ -201,6 +201,7 @@ RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/p
 # Must be placed after python installation, because it needs link to python3
 USER $USER_UID:$USER_GID
 RUN nvim --headless "+MasonInstall html-lsp css-lsp lua-language-server pyright" +qa
+RUN nvim --headless -c 'TSUpdateSync' -c 'MasonUpdate' -c 'q'
 RUN nvim --headless +MasonToolsInstallSync +qa
 
 # ############################################################################

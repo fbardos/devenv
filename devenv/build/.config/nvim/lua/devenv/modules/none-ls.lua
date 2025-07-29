@@ -2,6 +2,7 @@
 -- switched to none-ls as drop in replacement
 return {
     "nvimtools/none-ls.nvim",  -- LSP integration with linters
+    event = "LspAttach",
     config = function()
         local null_ls = require("null-ls")
         null_ls.setup({

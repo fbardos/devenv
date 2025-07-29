@@ -1,5 +1,6 @@
 return {
     "quangnguyen30192/cmp-nvim-ultisnips",  -- Ultisnip integration into Drop-down from nvim-cmp
+    event = "InsertEnter",
     opts = {
         filetype_source = "treesitter",
         show_snippets = "all",
