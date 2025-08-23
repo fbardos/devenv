@@ -20,18 +20,9 @@ return {
             },
         })
 
-        mason_lspconfig.setup({
-            -- list of servers for mason to install
-            ensure_installed = {
-                "html",
-                "cssls",
-                "lua_ls",
-                "pyright",
-                "yamlls",
-            },
-            -- auto-install configured servers (with lspconfig)
-            automatic_installation = true, -- not the same as ensure_installed
-        })
+	-- do not run mason_lspconfig.setup with ensured_installed = {} here,
+	-- because the LSPs get already configured in lspconfig.lua.
+	-- Otherwise, two duplicate LSPs get attached.
 
         mason_tool_installer.setup({
             ensure_installed = {
