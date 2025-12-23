@@ -1,15 +1,12 @@
 return {
     "nvim-treesitter/nvim-treesitter",  -- treesitter
-    event = { "BufReadPre", "BufNewFile" },
+    lazy = false,
     build = ":TSUpdate",
     dependencies = {
-      "nvim-treesitter/nvim-treesitter-textobjects",
       "windwp/nvim-ts-autotag",
     },
     config = function()
-        local treesitter = require("nvim-treesitter.configs")
-
-        treesitter.setup({
+        require("nvim-treesitter.config").setup({
             highlight = { enable = true },
             indent = { enable = true },
             autotag = { enable = true },
