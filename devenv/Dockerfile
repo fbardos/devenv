@@ -159,9 +159,13 @@ RUN wget -q -O quarto.deb \
 
 # ROOT: rustc / cargo
 # cargo is used by mason to install LSPs, and also to install the tree-sitter
+# install under /usr/local to make available to unpriviledged user
 USER root
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable
-ENV PATH="~/.cargo/bin:${PATH}"
+ENV RUSTUP_HOME=/usr/local/rustup
+ENV CARGO_HOME=/usr/local/cargo
+ENV PATH=/usr/local/cargo/bin:$PATH
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+    | sh -s -- -y --profile minimal --default-toolchain stable
 
 # ROOT: Nodejs
 # npm is used by mason to install LSPs
