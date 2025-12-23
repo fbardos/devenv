@@ -201,7 +201,7 @@ RUN sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/p
     # Update Treesitter parser
     && nvim --headless +TSInstall +qa
 
-# USER: Install Mason LSPs
+# USER: Install Mason LSPs, Install treesitter languages
 # Unfortunately, it is currently not possible to run a MasonInstallAll
 # For the lsp names, use the names from Mason, not lspconfig
 # Must be placed after python installation, because it needs link to python3
@@ -209,6 +209,15 @@ USER $USER_UID:$USER_GID
 RUN nvim --headless "+MasonInstall html-lsp css-lsp lua-language-server pyright" +qa
 RUN nvim --headless -c 'TSUpdateSync' -c 'MasonUpdate' -c 'q'
 RUN nvim --headless +MasonToolsInstallSync +qa
+
+# install parsers synchronously (wait up to 5 minutes)
+# no asynchronous workflow possible, because it would exit the bulid command too early
+RUN nvim --headless "+Lazy! sync" +qa
+RUN nvim --headless \
+  "+lua require('nvim-treesitter').install({ \
+      'python','lua','json','html','css','markdown','markdown_inline','bash','vim','dockerfile','gitignore','sql' \
+    }, { summary=false }):wait(300000)" \
+  +qa
 
 # ############################################################################
 # SYSTEM, after installation
