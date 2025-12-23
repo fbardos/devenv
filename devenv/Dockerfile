@@ -58,6 +58,8 @@ RUN apt-get update \
     ninja-build \
     gettext \
     cmake \
+    clang \
+    luarocks \
     unzip \
     curl \
     ripgrep \

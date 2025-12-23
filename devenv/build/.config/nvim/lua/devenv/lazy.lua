@@ -16,6 +16,8 @@ require("lazy").setup(
         { import = "devenv.modules" },
     },
     {
+	-- change root path, with otherwise look in /lazy-rocks
+	root = vim.fn.stdpath("data") .. "/lazy",
         change_detection = {
             notify = false,
         },
