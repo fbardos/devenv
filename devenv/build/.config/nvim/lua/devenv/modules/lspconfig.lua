@@ -6,7 +6,6 @@ return {
         { "antosha417/nvim-lsp-file-operations", config = true },
     },
     config = function()
-        local lspconfig = require("lspconfig")
         local cmp_nvim_lsp = require("cmp_nvim_lsp")
         local keymap = vim.keymap -- for conciseness
         local opts = { noremap = true, silent = true }
@@ -74,25 +73,28 @@ return {
         -- end
 
         -- configure html server
-        lspconfig["html"].setup({
+        vim.lsp.config("html", {
             capabilities = capabilities,
             on_attach = on_attach,
         })
+	vim.lsp.enable("html")
 
         -- configure css server
-        lspconfig["cssls"].setup({
+        vim.lsp.config("cssls", {
             capabilities = capabilities,
             on_attach = on_attach,
         })
+	vim.lsp.enable("cssls")
 
         -- configure yaml server
-        lspconfig["yamlls"].setup({
+        vim.lsp.config("yamlls", {
             capabilities = capabilities,
             on_attach = on_attach,
         })
+	vim.lsp.enable("yamlls")
 
         -- configure python server
-        lspconfig["pyright"].setup({
+        vim.lsp.config("pyright", {
             capabilities = capabilities,
             on_attach = on_attach,
             settings = {
@@ -113,9 +115,10 @@ return {
                 }
             }
         })
+	vim.lsp.enable("pyright")
 
         -- configure lua server (with special settings)
-        lspconfig["lua_ls"].setup({
+        vim.lsp.config("lua_ls", {
             capabilities = capabilities,
             on_attach = on_attach,
             settings = { -- custom settings for lua
@@ -134,5 +137,7 @@ return {
                 },
             },
         })
+	vim.lsp.enable("pyright")
+
     end,
 }
