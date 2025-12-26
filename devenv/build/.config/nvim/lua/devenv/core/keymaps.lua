@@ -51,20 +51,68 @@ keymap.set("v", "<expr> P", "'Pgv\"'.v:register.'y`>'")
 -- highlight the first 88 characters in a different color
 -- than the rest to mark too long lines
 vim.api.nvim_set_hl(0, "TooLongLine", { bg = "#664e00" })
-local tooLongMatchId = vim.fn.matchadd("TooLongLine", "\\%>88v.*")
-function ToggleTooLongHighlight()
-  if tooLongMatchId then
-    vim.fn.matchdelete(tooLongMatchId)
-    tooLongMatchId = nil
-  else
-    tooLongMatchId = vim.fn.matchadd("TooLongLine", "\\%>88v.*")
+local PATTERN = [[\%>88v.*]]
+
+local aug = vim.api.nvim_create_augroup("TooLongLineHL", { clear = true })
+
+local function with_win(win, fn)
+  if win == 0 then win = vim.api.nvim_get_current_win() end
+  if not vim.api.nvim_win_is_valid(win) then return end
+  local cur = vim.api.nvim_get_current_win()
+  if cur ~= win then vim.api.nvim_set_current_win(win) end
+  local ok, err = pcall(fn)
+  if cur ~= win and vim.api.nvim_win_is_valid(cur) then
+    vim.api.nvim_set_current_win(cur)
   end
+  return ok, err
 end
 
-vim.api.nvim_set_keymap(
-  "n", "<Leader>hl", "<cmd>lua ToggleTooLongHighlight()<CR>",
-  { noremap = true, silent = true }
-)
+local function ensure_enabled_in_win(win)
+  with_win(win, function()
+    if vim.w.tooLongDisabled then return end
+    if vim.w.tooLongMatchId then return end
+    vim.w.tooLongMatchId = vim.fn.matchadd("TooLongLine", PATTERN)
+  end)
+end
+
+local function disable_in_win(win)
+  with_win(win, function()
+    local id = vim.w.tooLongMatchId
+    if id then
+      pcall(vim.fn.matchdelete, id)
+      vim.w.tooLongMatchId = nil
+    end
+  end)
+end
+
+-- Auto-enable in any window you enter/create (unless that window disabled it)
+vim.api.nvim_create_autocmd({ "WinEnter", "WinNew", "BufWinEnter" }, {
+  group = aug,
+  callback = function()
+    ensure_enabled_in_win(0) -- 0 = current window (reliable)
+  end,
+})
+
+-- Per-window toggle
+function ToggleTooLongHighlight()
+  local win = vim.api.nvim_get_current_win()
+  with_win(win, function()
+    if vim.w.tooLongMatchId then
+      vim.w.tooLongDisabled = true
+      disable_in_win(win)
+    else
+      vim.w.tooLongDisabled = false
+      ensure_enabled_in_win(win)
+    end
+  end)
+end
+
+vim.keymap.set("n", "<Leader>hl", ToggleTooLongHighlight, { silent = true })
+
+-- Enable immediately for existing windows at startup
+for _, win in ipairs(vim.api.nvim_list_wins()) do
+  ensure_enabled_in_win(win)
+end
 
 -- Copilot change accept
 vim.keymap.set('i', '<C-l>', 'copilot#Accept("\\<CR>")', {
